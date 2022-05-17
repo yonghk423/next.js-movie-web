@@ -1,11 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link';
+import { useQuery } from 'react-query';
 import Header from '../components/Header';
-// import Image from 'next/image'
-// import styles from '../styles/Home.module.css'
+import { getMovies, IGetMoviesResult } from './api/api';
 
 const Home: NextPage = () => {
+  const {data, isLoading} = useQuery<IGetMoviesResult>(["movies", "nowPlaying"],  getMovies )
+  console.log(data, isLoading);
   return (   
     <>
       <Header/>

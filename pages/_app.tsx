@@ -2,6 +2,8 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { theme } from "../styles/theme"
 import { ThemeProvider } from "styled-components";
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 // import { createGlobalStyle } from "styled-components";
 // const GlobalStyle = createGlobalStyle`
 // @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -68,14 +70,17 @@ import { ThemeProvider } from "styled-components";
 // }
 // `;
 
+const client = new QueryClient()
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+  
+  <QueryClientProvider client={client}>  
     <ThemeProvider theme={theme}>
       {/* <GlobalStyle /> */}
       <Component {...pageProps} />
     </ThemeProvider>
-    </>  
+  </QueryClientProvider>    
   )
 }
 
