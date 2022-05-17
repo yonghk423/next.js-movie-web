@@ -62,14 +62,7 @@ const Item = styled.li`
 const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
-  right: 0px;
-  padding: 5px 10px;
-  padding-left: 40px;
-  z-index: -1;
-  color: white;
-  font-size: 16px;
-  background-color: transparent;
-  border: 1px solid ${(props) => props.theme.white.lighter};
+  left: -150px;
 `;
 
 export default function Header() {
