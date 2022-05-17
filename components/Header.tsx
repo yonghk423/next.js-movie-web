@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 const NavBar = styled.nav`
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
