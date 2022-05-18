@@ -61,8 +61,14 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
-  height: 200px;
+  height: 150px;
   font-size: 66px;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `;
 
 const rowVariants = {
@@ -76,6 +82,20 @@ const rowVariants = {
     x: -1000    
   },
 };
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: {
+      delay: 0.5,
+      duaration:0.3,
+      type: "tween",
+    }
+  }
+}
 
 const offset = 6;
 
@@ -103,10 +123,10 @@ export default function Main() {
       <>
         <Banner 
           onClick={increaseIndex}
-          bgPhoto={makeImagePath(data?.results[2].backdrop_path || "")}
+          bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
           >
-          <Title>{data?.results[2].title}</Title>
-          <Overview>{data?.results[2].overview}</Overview>
+          <Title>{data?.results[0].title}</Title>
+          <Overview>{data?.results[0].overview}</Overview>
         </Banner>
         <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -123,7 +143,10 @@ export default function Main() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      whileHover="hover"
+                      initial="normal"
+                      variants={boxVariants}
+                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}                      
                     />
                   ))}
               </Row>
