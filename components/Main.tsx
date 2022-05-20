@@ -4,10 +4,44 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router';
 import styled from "styled-components";
 import { useQuery } from 'react-query';
-import { getMovies, IGetMoviesResult } from '../pages/api/api';
+import { getMovies, IGetMoviesResult, IMovie } from '../pages/api/api';
 import { makeImagePath } from './Utils';
 import { motion, AnimatePresence, useViewportScroll } from 'framer-motion';
 import { useState } from 'react';
+
+const BigCover = styled.div`
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+`;
+
+const BigTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 20px;
+  font-size: 46px;
+  position: relative;
+  top: -80px;
+`;
+
+const BigOverview = styled.p`
+  padding: 20px;
+  position: relative;
+  top: -80px;
+  color: ${(props) => props.theme.white.lighter};
+`;
+
+const BigMovie = styled(motion.div)`
+  position: absolute;
+  width: 40vw;
+  height: 80vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: ${(props) => props.theme.black.lighter};
+`;
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -117,10 +151,13 @@ export default function Main() {
   const [leaving, setLeaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false)
   const [modalData, setModalData] = useState(0)
+  const [modalDetailData, setModalDetailData] = useState<IMovie>()
   const onBoxClicked = (movieId:number) => {
     setModalOpen(true)
     setModalData(movieId)
-  }
+    let detailData = data?.results.find((movie) => (movie.id === movieId))
+    setModalDetailData(detailData);
+  }  
   const { scrollY } = useViewportScroll();
   const onOverlayClick = () => {
     setModalOpen(false);
@@ -180,20 +217,30 @@ export default function Main() {
           <AnimatePresence>
             { modalOpen ? (
               <>
-                <Overlay onClick={onOverlayClick} animate={{opacity:1}}/>
-                <motion.div
-                layoutId={modalData + ""}
-                  style={{
-                    position: "absolute",
-                    width: "40vw",
-                    height: "80vh",
-                    backgroundColor: "green",
-                    top: scrollY.get() + 100,
-                    left: 0,
-                    right: 0,
-                    margin: "0 auto",
-                  }}
+                <Overlay 
+                  onClick={onOverlayClick}
+                  exit={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}     
                 />
+                <BigMovie
+                  style={{ top: scrollY.get() + 100}}
+                  layoutId={modalData + ""}
+                >
+                  {modalDetailData && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                            modalDetailData.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigTitle>{modalDetailData.title}</BigTitle>
+                      <BigOverview>{modalDetailData.overview}</BigOverview>
+                    </>
+                  )}
+                </BigMovie>
               </>
             ) : null}
           </AnimatePresence>          
