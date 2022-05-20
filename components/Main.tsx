@@ -9,6 +9,14 @@ import { makeImagePath } from './Utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
+const Overlay = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+`
+
 const Wrapper = styled.div`
   background: black;
   padding-bottom: 200px;
@@ -167,19 +175,22 @@ export default function Main() {
           </Slider>
           <AnimatePresence>
             { modalOpen ? (
-              <motion.div
-              layoutId={modalData + ""}
-                style={{
-                  position: "absolute",
-                  width: "40vw",
-                  height: "80vh",
-                  backgroundColor: "green",
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  margin: "0 auto",
-                }}
-              />
+              <>
+                <Overlay/>
+                <motion.div
+                layoutId={modalData + ""}
+                  style={{
+                    position: "absolute",
+                    width: "40vw",
+                    height: "80vh",
+                    backgroundColor: "green",
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    margin: "0 auto",
+                  }}
+                />
+              </>
             ) : null}
           </AnimatePresence>          
       </>
