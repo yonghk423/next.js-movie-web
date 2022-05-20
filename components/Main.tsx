@@ -106,7 +106,12 @@ export default function Main() {
   console.log(data, isLoading);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalData, setModalData] = useState(0)
+  const onBoxClicked = (movieId:number) => {
+    setModalOpen(true)
+    setModalData(movieId)
+  }
 
   const increaseIndex = () => {
     if (data) {
@@ -118,9 +123,7 @@ export default function Main() {
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onBoxClicked = (movieId:number) => {
-    console.log(movieId)
-  }
+  
   return (   
     <>
       <Wrapper>
@@ -149,6 +152,7 @@ export default function Main() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ""}
                       key={movie.id}
                       whileHover="hover"
                       initial="normal"
@@ -160,7 +164,24 @@ export default function Main() {
                   ))}
               </Row>
             </AnimatePresence>
-          </Slider>                    
+          </Slider>
+          <AnimatePresence>
+            { modalOpen ? (
+              <motion.div
+              layoutId={modalData + ""}
+                style={{
+                  position: "absolute",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "green",
+                  top: 50,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                }}
+              />
+            ) : null}
+          </AnimatePresence>          
       </>
       )}
       </Wrapper>
