@@ -1,13 +1,13 @@
 // import Head from 'next/head'
 // import Link from 'next/link';
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router';
 import styled from "styled-components";
 import { useQuery } from 'react-query';
 import { getMovies, IGetMoviesResult } from '../pages/api/api';
 import { makeImagePath } from './Utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import Movies from '../pages/Movies';
 
 const Wrapper = styled.div`
   background: black;
@@ -21,7 +21,7 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled.div<{bgPhoto:string}>`
+const Banner = styled.div<{bgphoto:string}>`
   position: relative;
   height: 100vh;
   display: flex;
@@ -29,7 +29,7 @@ const Banner = styled.div<{bgPhoto:string}>`
   justify-content: center;
   padding: 60px;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), 
-  url(${(props) => props.bgPhoto});
+  url(${(props) => props.bgphoto});
   background-size: cover;
 `;
 
@@ -56,13 +56,15 @@ const Row = styled(motion.div)`
   width: 100%;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bgphoto: string }>`
   background-color: white;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
   height: 150px;
   font-size: 66px;
+  cursor: pointer;
+  
   &:first-child {
     transform-origin: center left;
   }
@@ -70,19 +72,6 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
     transform-origin: center right;
   }
 `;
-
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
-`
 
 const rowVariants = {
   hidden: {
@@ -110,24 +99,15 @@ const boxVariants = {
   }
 }
 
-const infoVariants = {
-  hover: {
-    opacity: 1,
-    transition: {
-      delay: 0.5,
-      duaration:0.1,
-      type: "tween",
-    }
-  }
-}
-
 const offset = 6;
 
-export default function Main() {
+export default function Main() {  
   const {data, isLoading} = useQuery<IGetMoviesResult>(["movies", "nowPlaying"],  getMovies )
   console.log(data, isLoading);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+
+
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -138,6 +118,9 @@ export default function Main() {
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
+  const onBoxClicked = (movieId:number) => {
+    console.log(movieId)
+  }
   return (   
     <>
       <Wrapper>
@@ -147,10 +130,10 @@ export default function Main() {
       <>
         <Banner 
           onClick={increaseIndex}
-          bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
+          bgphoto={makeImagePath(data?.results[2].backdrop_path || "")}
           >
-          <Title>{data?.results[0].title}</Title>
-          <Overview>{data?.results[0].overview}</Overview>
+          <Title>{data?.results[2].title}</Title>
+          <Overview>{data?.results[2].overview}</Overview>
         </Banner>
         <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -170,16 +153,14 @@ export default function Main() {
                       whileHover="hover"
                       initial="normal"
                       variants={boxVariants}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}                      
-                    >
-                      <Info variants={infoVariants}>
-                        <h4>{movie.title}</h4>
-                      </Info>
+                      onClick={() => onBoxClicked(movie.id)}
+                      bgphoto={makeImagePath(movie.backdrop_path, "w500")}                      
+                    >    
                     </Box>
                   ))}
               </Row>
             </AnimatePresence>
-          </Slider>
+          </Slider>                    
       </>
       )}
       </Wrapper>

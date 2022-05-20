@@ -20,9 +20,8 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
-export function getMovies() {
-    return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then(
-        (response) => response.json()
-    )
+export async function getMovies() {
+    const response = await fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`);
+  return await response.json();
 }
 

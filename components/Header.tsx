@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Image from 'next/image';
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
 const NavBar = styled.nav`
   position: relative;
@@ -42,16 +44,16 @@ const Items = styled.ul`
   list-style: none;
 `;
 
-const Item = styled.li`
-  margin-right: 20px;
-  color: ${(props) => props.theme.white.darker};
-  transition: color 0.3s ease-in-out;
-  &:hover {
-    color: ${(props) => props.theme.white.lighter};
-  }
-`;
+// const Item = styled.li`
+//   margin-right: 20px;
+//   color: ${(props) => props.theme.white.darker};
+//   transition: color 0.3s ease-in-out;
+//   &:hover {
+//     color: ${(props) => props.theme.white.lighter};
+//   }
+// `;
 
-  const Search = styled.span`
+  const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -67,10 +69,11 @@ const Input = styled(motion.input)`
   left: -150px;
 `;
 
+
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const openSearch = () => setSearchOpen(true);
   const toggleSearch = () => setSearchOpen((prev) => !prev);
+  
     return (    
       <NavBar>
         <Col>
@@ -78,7 +81,7 @@ export default function Header() {
             <Image src="/yonghee.jpeg" alt="" layout='fill' />
           </Logo>
           <Items>
-            <Item>
+            {/* <Item>
               <Link href={"/Series"}>
                 <a>series</a>
               </Link>
@@ -87,7 +90,7 @@ export default function Header() {
               <Link href={"/Movies"}>
                 <a>movies</a>
               </Link>
-            </Item>
+            </Item> */}
           </Items>
         </Col>
           <Search>
@@ -105,10 +108,7 @@ export default function Header() {
               clipRule="evenodd"
             ></path>
           </motion.svg>
-          <Input 
-            transition={{ type: "linear" }}
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
-            placeholder="search..."/>
+          <Input placeholder="search..."/>
           </Search>
       </NavBar>      
     )
