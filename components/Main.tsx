@@ -10,11 +10,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
 const Overlay = styled(motion.div)`
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 100%;
-  height: 100%;
+  height: 100%;  
   background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1;
 `
 
 const Wrapper = styled.div`
@@ -120,6 +121,9 @@ export default function Main() {
     setModalOpen(true)
     setModalData(movieId)
   }
+  const onOverlayClick = () => {
+    setModalOpen(false);
+  }
 
   const increaseIndex = () => {
     if (data) {
@@ -176,7 +180,7 @@ export default function Main() {
           <AnimatePresence>
             { modalOpen ? (
               <>
-                <Overlay/>
+                <Overlay onClick={onOverlayClick} animate={{opacity:1}}/>
                 <motion.div
                 layoutId={modalData + ""}
                   style={{
