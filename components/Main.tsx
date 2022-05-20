@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { useQuery } from 'react-query';
 import { getMovies, IGetMoviesResult } from '../pages/api/api';
 import { makeImagePath } from './Utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useViewportScroll } from 'framer-motion';
 import { useState } from 'react';
 
 const Overlay = styled(motion.div)`
@@ -121,10 +121,10 @@ export default function Main() {
     setModalOpen(true)
     setModalData(movieId)
   }
+  const { scrollY } = useViewportScroll();
   const onOverlayClick = () => {
     setModalOpen(false);
-  }
-
+  }  
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -188,7 +188,7 @@ export default function Main() {
                     width: "40vw",
                     height: "80vh",
                     backgroundColor: "green",
-                    top: 50,
+                    top: scrollY.get() + 100,
                     left: 0,
                     right: 0,
                     margin: "0 auto",
