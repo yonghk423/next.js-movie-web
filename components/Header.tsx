@@ -3,8 +3,8 @@ import styled from "styled-components";
 import Image from 'next/image';
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router'
 
 const NavBar = styled.nav`
   position: relative;
@@ -69,11 +69,23 @@ const Input = styled(motion.input)`
   left: -150px;
 `;
 
+interface IForm {
+  keyword: string;
+}
 
-export default function Header() {
+const API_KEY = "4c5d0a3408a359c4fa9760f4856529bc";
+const BASE_PATH = "https://api.themoviedb.org/3";
+
+export default function Header() {   
   const [searchOpen, setSearchOpen] = useState(false);
   const toggleSearch = () => setSearchOpen((prev) => !prev);
-  
+  const { register, handleSubmit } = useForm<IForm>();
+  const router = useRouter()
+  async function onClickData(movieData:IForm) {
+    const res = fetch(`${BASE_PATH}/search/movie?api_key=${API_KEY}&language=en-US&query=${movieData.keyword}`) 
+    console.log(res);     
+    router.push(`/DetailPage/${movieData.keyword}`)    
+  };    
     return (    
       <NavBar>
         <Col>
@@ -93,7 +105,7 @@ export default function Header() {
             </Item> */}
           </Items>
         </Col>
-          <Search>
+          <Search onSubmit={handleSubmit(onClickData)}>
             <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -180 : 0 }}
@@ -108,8 +120,10 @@ export default function Header() {
               clipRule="evenodd"
             ></path>
           </motion.svg>
-          <Input placeholder="search..."/>
-          </Search>
+          <Input 
+          {...register("keyword", { required: true, minLength: 2 })}          
+          placeholder="search..."/>
+          </Search>          
       </NavBar>      
     )
 }

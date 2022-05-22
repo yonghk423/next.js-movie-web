@@ -79,7 +79,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   <QueryClientProvider client={client}>  
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <ReactQueryDevtools initialIsOpen={true} />
       <Component {...pageProps} />
     </ThemeProvider>
   </QueryClientProvider>    
