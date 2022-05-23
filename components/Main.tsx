@@ -4,10 +4,39 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router';
 import styled from "styled-components";
 import { useQuery } from 'react-query';
-import { getMovies, IGetMoviesResult, IMovie } from '../pages/api/api';
 import { makeImagePath } from './Utils';
 import { motion, AnimatePresence, useViewportScroll } from 'framer-motion';
 import { useState } from 'react';
+import useSWR from 'swr'
+
+const API_KEY = "4c5d0a3408a359c4fa9760f4856529bc";
+const BASE_PATH = "https://api.themoviedb.org/3";
+
+export interface IMovie {
+  id: number;
+  backdrop_path: string;
+  poster_path: string;
+  title: string;
+  overview: string;
+}
+
+export interface IGetMoviesResult {
+  dates: {
+    maximum: string;
+    minimum: string;
+  };
+  page: number;
+  results: IMovie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export async function getMovies() {
+    const response = await fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`);
+  return await response.json();
+}
+
+
 
 const BigCover = styled.div`
   width: 100%;
@@ -145,8 +174,9 @@ const boxVariants = {
 const offset = 6;
 
 export default function Main() {  
-  const {data, isLoading} = useQuery<IGetMoviesResult>(["movies", "nowPlaying"],  getMovies )
-  console.log(data, isLoading);
+  // const {data, isLoading} = useQuery<IGetMoviesResult>(["movies", "nowPlaying"],  getMovies )
+  const { data, error } = useSWR<IGetMoviesResult>(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`, getMovies)
+  console.log(data);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false)
@@ -175,17 +205,13 @@ export default function Main() {
   
   return (   
     <>
-      <Wrapper>
-        {isLoading ? ( 
-          <Loader>Loading...</Loader>
-    ) : ( 
-      <>
+      <Wrapper>    
         <Banner 
           onClick={increaseIndex}
-          bgphoto={makeImagePath(data?.results[2].backdrop_path || "")}
+          bgphoto={makeImagePath(data?.results[1].backdrop_path || "")}
           >
-          <Title>{data?.results[2].title}</Title>
-          <Overview>{data?.results[2].overview}</Overview>
+          <Title>{data?.results[1].title}</Title>
+          <Overview>{data?.results[1].overview}</Overview>
         </Banner>
         <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
@@ -207,7 +233,7 @@ export default function Main() {
                       initial="normal"
                       variants={boxVariants}
                       onClick={() => onBoxClicked(movie.id)}
-                      bgphoto={makeImagePath(movie.backdrop_path, "w500")}                      
+                      bgphoto={makeImagePath(movie.backdrop_path)}                      
                     >    
                     </Box>
                   ))}
@@ -230,10 +256,7 @@ export default function Main() {
                     <>
                       <BigCover
                         style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            modalDetailData.backdrop_path,
-                            "w500"
-                          )})`,
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(modalDetailData.backdrop_path)})`
                         }}
                       />
                       <BigTitle>{modalDetailData.title}</BigTitle>
@@ -243,9 +266,7 @@ export default function Main() {
                 </BigMovie>
               </>
             ) : null}
-          </AnimatePresence>          
-      </>
-      )}
+          </AnimatePresence>    
       </Wrapper>
     </>
   )

@@ -105,7 +105,7 @@ export default function Header() {
             </Item> */}
           </Items>
         </Col>
-          <Search onSubmit={handleSubmit(onClickData)}>
+          {/* <Search onSubmit={handleSubmit(onClickData)}>
             <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -180 : 0 }}
@@ -123,7 +123,7 @@ export default function Header() {
           <Input 
           {...register("keyword", { required: true, minLength: 2 })}          
           placeholder="search..."/>
-          </Search>          
+          </Search>           */}
       </NavBar>      
     )
 }
